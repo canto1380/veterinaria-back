@@ -4,12 +4,15 @@ import cors from 'cors'
 import path from 'path'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
+import jwt, { sign } from 'jsonwebtoken'
 
 import './database'
 
 import userRoutes from './routes/user.routes'
 import userPacientes from './routes/paciente.routes'
 import citasRoutes from './routes/citas.routes'
+import signinRoutes from './routes/signin.route'
+import turnosRoutes from './routes/turnos.routes'
 
 /*** CONFIGURACIONES ***/
 /* Instancia de express */
@@ -31,11 +34,37 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname,'../public')))
 app.use(bodyParser.json())
-// app.use('../public', express.static(`${__dirname}/storage/img`))
+
+app.use('/secure',function(req, res, next) {
+    let token = req.headers['authorization']
+    if (!token) {
+      res.status(401).send({
+        ok: false,
+        message: 'Toket inexistente'
+      })
+    }
+    token = token.replace('Bearer ', '')
+    jwt.verify(token, process.env.JWT_SECRET, function(err, tokenn) {
+        console.log(err)
+      if (err) {
+        return res.status(401).send({
+          ok: false,
+          message: 'Token inválido'
+        });
+      } else {
+        req.token = token
+        next()
+      }
+    });
+  });
 
 /* Rutas */
+app.use('/signin', signinRoutes)
 app.use('/user', userRoutes)
-app.use('/pacientes', userPacientes)
-app.use('/citas', citasRoutes)
+
+app.use('/secure/user', userRoutes)
+app.use('/secure/pacientes', userPacientes)
+app.use('/secure/citas', citasRoutes)
+app.use('/secure/turnos', turnosRoutes())
 
 module.exports = app

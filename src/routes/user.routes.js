@@ -1,5 +1,6 @@
 import {Router} from 'express'
 import userController from '../controllers/user.controller'
+import signinController from '../controllers/signin'
 
 const router = Router()
 
@@ -17,8 +18,5 @@ const router = Router()
     
     /* Ruta actulizar usuario */
     router.put('/updateUser/:id', userController.actualizarUser)
-    
-    /* Ruta para autenticar usuario */
-    // router.post('/signin', signinController.signin)
 
 export default router;

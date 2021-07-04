@@ -41,6 +41,11 @@ const userSchema = new Schema(
             require: true,
             minlength: 8,
             maxLength:12
+          },
+          admin:{
+              type: Boolean,
+              require: true,
+              default: false
           }
     }, { timestamps: true} 
 )

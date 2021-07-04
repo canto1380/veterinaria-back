@@ -37,7 +37,7 @@ userController.obtenerID = async (req,res,next) =>{
 /** Actualizar registro **/
 userController.actualizarUser = async (req, res, next) => {
     try {
-        const usuario = await User.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true});
+        const usuario = await User.findByIdAndUpdate(req.params.id, req.body);
         res.status(200).json(usuario)   
     } catch (error) {
         res.status(404).json({mensaje:"No se pudo actualizar"})
